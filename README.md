@@ -31,10 +31,10 @@ It was developed as part of the **Design Patterns** course and demonstrates usag
 ---
 ## 🛠️ Technologies
 
-Java 24
-Swing
-Apache DerbyDB
-JUnit 5
+- Java 24
+- Swing
+- Apache DerbyDB
+- JUnit 5
 
 ---
 ## 🚀 How to Run the Project
