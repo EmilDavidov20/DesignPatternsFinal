@@ -48,6 +48,12 @@ Click File > Open... and select the DesignPatternsFinal folder.
 
 ### 3️⃣ Configure Libraries 
 Go to File > Project Structure > Libraries.
-Add the JARs from the lib/ folder: 
+Add the JARs from the /lib folder...
 
+---
+
+### 4️⃣ Database Setup
+The app uses Apache Derby Embedded.
+A local database folder tasksdb is already included in the project.
+Derby will automatically boot and create/update the database when running the app. 
 
