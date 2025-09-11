@@ -35,7 +35,7 @@ Follow these steps to download, set up, and run the application locally:
 
 ### 1️⃣ Clone the repository
 ```bash
-git clone https://github.com/YOUR_USERNAME/DesignPatternsFinal.git
+git clone https://github.com/EmilDavidov20/DesignPatternsFinal
 cd DesignPatternsFinal
 
 
