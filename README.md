@@ -64,6 +64,6 @@ Locate the main class:
 ```bash
 il.ac.hit.project.main.Main
 ```
-Right-click it → Run 'Main'.
+Right-click it - 'Main' → Run.
 The Task Manager UI should appear. 
 
