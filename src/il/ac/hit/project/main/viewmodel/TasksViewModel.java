@@ -51,6 +51,11 @@ public class TasksViewModel {
         dao.deleteTask(id);
         load();
     }
+    public void deleteAll() throws TasksDAOException {
+        dao.deleteTasks();
+        load();
+    }
+
 
     public void exportCsv(String path) {
         ReportVisitor v = new ReportVisitor();

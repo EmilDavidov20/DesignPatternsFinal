@@ -41,7 +41,7 @@ public class MainFrame extends JFrame {
         JPanel top = new JPanel(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
         gc.insets = new Insets(4, 4, 4, 4);
-        JButton add = new JButton("Add"), edit = new JButton("Edit"), del = new JButton("Delete"), btnReport = new JButton("Generate Report"), export = new JButton("Export CSV");
+        JButton add = new JButton("Add"), edit = new JButton("Edit"), del = new JButton("Delete"),deleteAll = new JButton("Delete All"), btnReport = new JButton("Generate Report"), export = new JButton("Export CSV");
         gc.gridy = 0;
         gc.gridx = 0;
         top.add(new JLabel("Tasks:"), gc);
@@ -51,6 +51,8 @@ public class MainFrame extends JFrame {
         top.add(edit, gc);
         gc.gridx++;
         top.add(del, gc);
+        gc.gridx++;
+        top.add(deleteAll, gc);
         gc.gridx++;
         top.add(export, gc);
         gc.gridx++;
@@ -90,6 +92,7 @@ public class MainFrame extends JFrame {
         add.addActionListener(e -> onAdd());
         edit.addActionListener(e -> onEdit());
         del.addActionListener(e -> onDelete());
+        deleteAll.addActionListener(e -> onDeleteAll());
 
 //        btnReport.addActionListener(e -> {
 //            StringBuilder sb = new StringBuilder();
@@ -263,6 +266,28 @@ public class MainFrame extends JFrame {
             }
         }
     }
+    private void onDeleteAll() {
+        int count = model.getRowCount();
+        if (count == 0) {
+            JOptionPane.showMessageDialog(
+                    this, "No tasks to delete.", "Info", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        String msg = "Are you sure you want to delete ALL tasks (" + count + ")?\n"
+                + "This action cannot be undone.";
+        int ans = JOptionPane.showConfirmDialog(
+                this, msg, "Confirm Delete All", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+        if (ans == JOptionPane.YES_OPTION) {
+            try {
+                vm.deleteAll();
+            } catch (TasksDAOException ex) {
+                err(ex);
+            }
+        }
+    }
+
 
     private void onExport() {
         JFileChooser ch = new JFileChooser(new File("."));
