@@ -21,7 +21,7 @@ It was developed as part of the **Design Patterns** course and demonstrates usag
 ---
 
 ## ✨ Features
-✔️ Add / Edit / Delete tasks (including multi-row delete)  
+✔️ Add / Edit / Delete tasks 
 ✔️ Sort & Filter by state (ToDo, In Progress, Completed)  
 ✔️ 🔎 Search tasks by title  
 ✔️ Export tasks to CSV  
