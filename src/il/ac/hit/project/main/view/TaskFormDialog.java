@@ -7,13 +7,13 @@ import java.awt.*;
 
 public class TaskFormDialog extends JDialog {
     private final JTextField titleField = new JTextField(20);
-    private final JTextArea descArea = new JTextArea(0, 0);
+    private final JTextArea descArea = new JTextArea(2, 2);
     private final JComboBox<TaskState> stateBox = new JComboBox<>(TaskState.values());
     private boolean ok = false;
 
     public TaskFormDialog(JFrame owner, String title) {
         super(owner, title, true);
-        setLayout(new BorderLayout(8, 8));
+        setLayout(new BorderLayout(20, 20));
         JPanel form = new JPanel(new GridLayout(0, 2, 6, 6));
         form.add(new JLabel("Title:"));
         form.add(titleField);

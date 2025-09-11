@@ -6,6 +6,8 @@ import il.ac.hit.project.main.viewmodel.TasksViewModel;
 import il.ac.hit.project.main.viewmodel.combinator.TaskFilters;
 import il.ac.hit.project.main.viewmodel.strategy.*;
 import il.ac.hit.project.main.model.report.ReportVisitor;
+import il.ac.hit.project.main.model.report.ReportData;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -92,30 +94,61 @@ public class MainFrame extends JFrame {
         edit.addActionListener(e -> onEdit());
         del.addActionListener(e -> onDelete());
 
+//        btnReport.addActionListener(e -> {
+//            StringBuilder sb = new StringBuilder();
+//            sb.append("[ ] =  To Do\n").append("[~] =  In Progress\n").append("[x] =  Completed\n\n");
+//            for (int i = 0; i < model.getRowCount(); i++) {
+//                ITask t = model.getAt(i);
+//                String sym = t.getState().symbol();
+//                sb.append(sym).append(" #").append(t.getId())
+//                        .append(" ").append(t.getTitle() == null ? "" : t.getTitle())
+//                        .append("\n");
+//
+//            }
+//            JTextArea area = new JTextArea(sb.toString(), 15, 40);
+//            area.setEditable(false);
+//            area.setFont(new java.awt.Font("Monospaced", java.awt.Font.PLAIN, 16));
+//            JScrollPane sp = new JScrollPane(area);
+//            sp.setPreferredSize(new Dimension(500, 400));
+//            JOptionPane.showMessageDialog(this, sp, "Report (Preview)", JOptionPane.INFORMATION_MESSAGE);
+//        });
+        // למעלה בקובץ ה-View:
+// import il.ac.hit.project.main.model.report.ReportVisitor;
+// import il.ac.hit.project.main.model.report.ReportData;
+// import il.ac.hit.project.main.model.task.ITask;
+
         btnReport.addActionListener(e -> {
+            // 1) אוספים את המשימות המוצגות כרגע בטבלה דרך ה-Visitor
+            ReportVisitor rv = new ReportVisitor();
+            for (int i = 0; i < model.getRowCount(); i++) {
+                rv.visit(model.getAt(i));
+            }
+            ReportData rd = rv.build();
+
+            // 2) בונים טקסט דו"ח: סיכום + מפתח + רשימת פריטים
             StringBuilder sb = new StringBuilder();
 
-            sb.append("[ ] =  To Do\n")
-                    .append("[~] =  In Progress\n")
-                    .append("[x] =  Completed\n\n");
+            // סיכום
+            sb.append("Total: ").append(rd.total()).append("\n")
+                    .append("[ ] = To Do: ").append(rd.todo()).append("\n")
+                    .append("[~] = In Progress: ").append(rd.inProgress()).append("\n")
+                    .append("[x] = Completed: ").append(rd.completed()).append("\n\n");
 
-            for (int i = 0; i < model.getRowCount(); i++) {
-                ITask t = model.getAt(i);
-                String sym = t.getState().symbol();
+
+            for (ITask t : rd.all()) {
+                String sym = t.getState().symbol(); // יש לך כבר symbol() ב-TaskState
                 sb.append(sym).append(" #").append(t.getId())
                         .append(" ").append(t.getTitle() == null ? "" : t.getTitle())
                         .append("\n");
-
             }
 
-            JTextArea area = new JTextArea(sb.toString(), 15, 40);
+            JTextArea area = new JTextArea(sb.toString(), 20, 60);
             area.setEditable(false);
             area.setFont(new java.awt.Font("Monospaced", java.awt.Font.PLAIN, 16));
             JScrollPane sp = new JScrollPane(area);
             sp.setPreferredSize(new Dimension(500, 400));
             JOptionPane.showMessageDialog(this, sp, "Report (Preview)", JOptionPane.INFORMATION_MESSAGE);
         });
-
 
         setLocationRelativeTo(null);
         export.addActionListener(e -> onExport());
