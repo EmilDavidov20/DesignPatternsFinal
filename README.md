@@ -37,9 +37,9 @@ Follow these steps to download, set up, and run the application locally:
 ```bash
 git clone https://github.com/EmilDavidov20/DesignPatternsFinal
 cd DesignPatternsFinal
-
----
 ```
+---
+
 ### 2️⃣ Open in IntelliJ IDEA
 Launch IntelliJ IDEA (Community or Ultimate).
 Click File > Open... and select the DesignPatternsFinal folder.
