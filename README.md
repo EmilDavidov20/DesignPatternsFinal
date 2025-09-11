@@ -30,13 +30,4 @@ It was developed as part of the **Design Patterns** course and demonstrates usag
 
 ---
 
-## 📂 Project Structure
-src/
-└── il/ac/hit/project/main/
-    ├── model/
-    │   ├── dao/        # Data Access Objects (Derby integration)
-    │   ├── report/     # ReportVisitor + ReportData
-    │   └── task/       # Task, TaskState, ITask
-    ├── view/           # MainFrame + dialogs (Swing UI)
-    └── viewmodel/      # TasksViewModel, Strategy, Combinator
 
