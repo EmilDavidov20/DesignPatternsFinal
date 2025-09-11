@@ -29,6 +29,14 @@ It was developed as part of the **Design Patterns** course and demonstrates usag
 ✔️ Modernized **Swing UI** (custom font, look & feel)  
 
 ---
+## 🛠️ Technologies
+
+Java 24
+Swing
+Apache DerbyDB
+JUnit 5
+
+---
 ## 🚀 How to Run the Project
 
 Follow these steps to download, set up, and run the application locally:
