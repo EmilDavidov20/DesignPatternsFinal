@@ -21,13 +21,12 @@ public class TasksDAODerby implements ITasksDAO {
 //    }
     private TasksDAODerby() throws TasksDAOException {
         try {
-            // JDBC 4+ לא דורש Class.forName; ננסה בעדינות ולא ניפול אם לא נמצא:
             try {
                 Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             } catch (ClassNotFoundException ignore) {
-                // נמשיך; אם ה-jar באמת חסר, נקבל SQLException בעת DriverManager.getConnection
             }
-            init(); // כאן אתה פותח חיבור עם "jdbc:derby:..." ; אם הדרייבר חסר נקבל SQLException
+
+            init();
         } catch (java.sql.SQLException e) {
             throw new TasksDAOException("init", e);
         }

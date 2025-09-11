@@ -109,29 +109,18 @@ public class MainFrame extends JFrame {
 //            sp.setPreferredSize(new Dimension(500, 400));
 //            JOptionPane.showMessageDialog(this, sp, "Report (Preview)", JOptionPane.INFORMATION_MESSAGE);
 //        });
-        // למעלה בקובץ ה-View:
-// import il.ac.hit.project.main.model.report.ReportVisitor;
-// import il.ac.hit.project.main.model.report.ReportData;
-// import il.ac.hit.project.main.model.task.ITask;
-
         btnReport.addActionListener(e -> {
-            // 1) אוספים את המשימות המוצגות כרגע בטבלה דרך ה-Visitor
             ReportVisitor rv = new ReportVisitor();
             for (int i = 0; i < model.getRowCount(); i++) {
                 rv.visit(model.getAt(i));
             }
             ReportData rd = rv.build();
-
-            // 2) בונים טקסט דו"ח: סיכום + מפתח + רשימת פריטים
             StringBuilder sb = new StringBuilder();
-
-            // סיכום
             sb.append("Total: ").append(rd.total()).append("\n")
                     .append("[ ] = To Do: ").append(rd.todo()).append("\n")
                     .append("[~] = In Progress: ").append(rd.inProgress()).append("\n")
                     .append("[x] = Completed: ").append(rd.completed()).append("\n\n")
                     .append("-------------------------------------------\n\n");
-
 
             for (ITask t : rd.all()) {
                 String sym = t.getState().symbol(); // יש לך כבר symbol() ב-TaskState

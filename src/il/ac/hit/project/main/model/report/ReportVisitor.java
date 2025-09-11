@@ -9,7 +9,6 @@ public class ReportVisitor {
     private final List<ReportTask> bucket = new ArrayList<>();
 
     public void visit(ITask task) {
-        // ממפה ITask ל-record לפי ה־state
         bucket.add(switch (task.getState()) {
             case ToDo -> new ToDoTask(task);
             case InProgress -> new InProgressTask(task);

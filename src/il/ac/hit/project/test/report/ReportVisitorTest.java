@@ -13,7 +13,7 @@ public class ReportVisitorTest {
 
     @Test
     void countsByState_fromVisitedTasks() {
-        // Arrange
+
         ReportVisitor rv = new ReportVisitor();
 
         ITask t1 = new Task(1, "Task A", "desc", TaskState.ToDo);
@@ -21,20 +21,17 @@ public class ReportVisitorTest {
         ITask t3 = new Task(3, "Task C", "desc", TaskState.Completed);
         ITask t4 = new Task(4, "Task D", "desc", TaskState.ToDo);
 
-        // Act
         rv.visit(t1);
         rv.visit(t2);
         rv.visit(t3);
         rv.visit(t4);
         ReportData rd = rv.build();
 
-        // Assert – ספירות
         assertEquals(4, rd.total());
         assertEquals(2, rd.todo());
         assertEquals(1, rd.inProgress());
         assertEquals(1, rd.completed());
 
-        // Assert – תוכן הרשימה שהוחזרה
         assertEquals(4, rd.all().size());
         assertEquals(1, rd.all().get(0).getId());
         assertEquals(TaskState.Completed, rd.all().get(2).getState());
