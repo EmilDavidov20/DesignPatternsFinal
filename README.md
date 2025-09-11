@@ -55,5 +55,15 @@ Add the JARs from the /lib folder...
 ### 4️⃣ Database Setup
 The app uses Apache Derby Embedded.
 A local database folder tasksdb is already included in the project.
-Derby will automatically boot and create/update the database when running the app. 
+Derby will automatically boot and create/update the database when running the app.
+
+---
+
+###5️⃣ Run the Application
+Locate the main class:
+```bash
+il.ac.hit.project.main.Main
+```
+Right-click it → Run 'Main'.
+The Task Manager UI should appear. 
 
