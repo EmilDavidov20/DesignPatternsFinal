@@ -12,9 +12,6 @@ import il.ac.hit.project.main.model.report.ReportData;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.util.function.Predicate;
-import java.awt.event.ActionEvent;
-
 
 public class MainFrame extends JFrame {
     private final TasksViewModel vm = new TasksViewModel();
@@ -132,7 +129,8 @@ public class MainFrame extends JFrame {
             sb.append("Total: ").append(rd.total()).append("\n")
                     .append("[ ] = To Do: ").append(rd.todo()).append("\n")
                     .append("[~] = In Progress: ").append(rd.inProgress()).append("\n")
-                    .append("[x] = Completed: ").append(rd.completed()).append("\n\n");
+                    .append("[x] = Completed: ").append(rd.completed()).append("\n\n")
+                    .append("-------------------------------------------\n\n");
 
 
             for (ITask t : rd.all()) {

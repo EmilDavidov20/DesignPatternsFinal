@@ -31,7 +31,9 @@ public class Task implements ITask {
         return state;
     }
 
-    public void setId(int id) { this.id = id; }  // עכשיו
+    public void setId(int id) {
+        this.id = id;
+    }  // עכשיו
 
     public void setTitle(String t) {
         this.title = t;

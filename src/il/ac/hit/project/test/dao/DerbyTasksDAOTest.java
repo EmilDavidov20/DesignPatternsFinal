@@ -11,31 +11,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DerbyTasksDAOTest {
-
-//    @Test
-//    void testAddAndGetTask() throws TasksDAOException {
-//        ITasksDAO dao = TasksDAODerby.getInstance();
-//        //dao.deleteTasks();
-//
-//        Task task = new Task(0,"Test DAO", "TEST", TaskState.ToDo);
-//        dao.addTask(task);
-//
-//        int generatedId = task.getId();
-//        assertTrue(generatedId > 0, "Expected generated id > 0");
-//
-//        ITask loaded = dao.getTask(generatedId);
-//        assertNotNull(loaded);
-//        assertEquals("Test DAO", loaded.getTitle());
-//        assertEquals(TaskState.ToDo, loaded.getState());
-//    }
-@Test
-void testAddAndGetTask_TODO() throws TasksDAOException {
-    ITasksDAO dao = TasksDAODerby.getInstance();
-    Task task = new Task(0, "Test TODO", "Task in TODO", TaskState.ToDo);
-    dao.addTask(task);
-    ITask loaded = dao.getTask(task.getId());
-    assertEquals(TaskState.ToDo, loaded.getState());
-}
+    @Test
+    void testAddAndGetTask_TODO() throws TasksDAOException {
+        ITasksDAO dao = TasksDAODerby.getInstance();
+        Task task = new Task(0, "Test TODO", "Task in TODO", TaskState.ToDo);
+        dao.addTask(task);
+        ITask loaded = dao.getTask(task.getId());
+        assertEquals(TaskState.ToDo, loaded.getState());
+    }
 
     @Test
     void testAddAndGetTask_IN_PROGRESS() throws TasksDAOException {

@@ -8,9 +8,8 @@ import java.util.*;
 
 public class TasksDAODerby implements ITasksDAO {
     private static TasksDAODerby instance;
-    private final String URL = "jdbc:derby:tasksdb;create=true";
 
-//    private TasksDAODerby() throws TasksDAOException {
+    //    private TasksDAODerby() throws TasksDAOException {
 //        try {
 //            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
 //            init();
@@ -20,27 +19,32 @@ public class TasksDAODerby implements ITasksDAO {
 //            throw new TasksDAOException("init", e);
 //        }
 //    }
-private TasksDAODerby() throws TasksDAOException {
-    try {
-        // JDBC 4+ לא דורש Class.forName; ננסה בעדינות ולא ניפול אם לא נמצא:
+    private TasksDAODerby() throws TasksDAOException {
         try {
-            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
-        } catch (ClassNotFoundException ignore) {
-            // נמשיך; אם ה-jar באמת חסר, נקבל SQLException בעת DriverManager.getConnection
+            // JDBC 4+ לא דורש Class.forName; ננסה בעדינות ולא ניפול אם לא נמצא:
+            try {
+                Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+            } catch (ClassNotFoundException ignore) {
+                // נמשיך; אם ה-jar באמת חסר, נקבל SQLException בעת DriverManager.getConnection
+            }
+            init(); // כאן אתה פותח חיבור עם "jdbc:derby:..." ; אם הדרייבר חסר נקבל SQLException
+        } catch (java.sql.SQLException e) {
+            throw new TasksDAOException("init", e);
         }
-        init(); // כאן אתה פותח חיבור עם "jdbc:derby:..." ; אם הדרייבר חסר נקבל SQLException
-    } catch (java.sql.SQLException e) {
-        throw new TasksDAOException("init", e);
     }
-}
 
 
-    public static synchronized TasksDAODerby getInstance() throws TasksDAOException {
+    //    public static synchronized TasksDAODerby getInstance() throws TasksDAOException {
+//        if (instance == null) instance = new TasksDAODerby();
+//        return instance;
+//    }
+    public static synchronized ITasksDAO getInstance() throws TasksDAOException {
         if (instance == null) instance = new TasksDAODerby();
         return instance;
     }
 
     private Connection getConnection() throws SQLException {
+        String URL = "jdbc:derby:tasksDB;create=true"; //tasksdb//
         return DriverManager.getConnection(URL);
     }
 
@@ -67,7 +71,7 @@ private TasksDAODerby() throws TasksDAOException {
         String u = x.toUpperCase();
         if (u.equals("TODO") || u.equals("TO DO")) return TaskState.ToDo;
         if (u.equals("IN_PROGRESS") || u.equals("IN PROGRESS") || u.equals("INPROGRESS")) return TaskState.InProgress;
-        if (u.equals("COMPLETED")  || u.equals("DONE"))        return TaskState.Completed;
+        if (u.equals("COMPLETED") || u.equals("DONE")) return TaskState.Completed;
 
         return TaskState.ToDo;
     }
@@ -128,7 +132,7 @@ private TasksDAODerby() throws TasksDAOException {
         }
     }
 
-//    public void addTask(ITask t) throws TasksDAOException {
+    //    public void addTask(ITask t) throws TasksDAOException {
 //        try (Connection c = getConnection();
 //             PreparedStatement ps = c.prepareStatement("INSERT INTO tasks(title,description,state) VALUES(?,?,?)")) {
 //            ps.setString(1, t.getTitle());
@@ -139,42 +143,42 @@ private TasksDAODerby() throws TasksDAOException {
 //            throw new TasksDAOException("addTask", e);
 //        }
 //    }
-@Override
-public void addTask(ITask t) throws TasksDAOException {
-    final String sql = "INSERT INTO tasks (title, description, state) VALUES (?,?,?)";
-    try (Connection c = getConnection();
-         PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+    @Override
+    public void addTask(ITask t) throws TasksDAOException {
+        final String sql = "INSERT INTO tasks (title, description, state) VALUES (?,?,?)";
+        try (Connection c = getConnection();
+             PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-        ps.setString(1, t.getTitle());
-        ps.setString(2, t.getDescription());
-        ps.setString(3, t.getState().name());
-        ps.executeUpdate();
+            ps.setString(1, t.getTitle());
+            ps.setString(2, t.getDescription());
+            ps.setString(3, t.getState().name());
+            ps.executeUpdate();
 
 
-        try (ResultSet rs = ps.getGeneratedKeys()) {
-            if (rs.next()) {
-                int id = rs.getInt(1);
-                ((Task) t).setId(id);
-                return;
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    int id = rs.getInt(1);
+                    ((Task) t).setId(id);
+                    return;
+                }
             }
-        }
 
 
-        try (Statement st = c.createStatement();
-             ResultSet rs = st.executeQuery("VALUES IDENTITY_VAL_LOCAL()")) {
-            if (rs.next()) {
-                int id = rs.getInt(1);
-                ((Task) t).setId(id);
-                return;
+            try (Statement st = c.createStatement();
+                 ResultSet rs = st.executeQuery("VALUES IDENTITY_VAL_LOCAL()")) {
+                if (rs.next()) {
+                    int id = rs.getInt(1);
+                    ((Task) t).setId(id);
+                    return;
+                }
             }
+
+            throw new TasksDAOException("Failed to obtain generated id");
+
+        } catch (SQLException e) {
+            throw new TasksDAOException("addTask", e);
         }
-
-        throw new TasksDAOException("Failed to obtain generated id");
-
-    } catch (SQLException e) {
-        throw new TasksDAOException("addTask", e);
     }
-}
 
 
     public void updateTask(ITask t) throws TasksDAOException {
