@@ -29,5 +29,14 @@ It was developed as part of the **Design Patterns** course and demonstrates usag
 ✔️ Modernized **Swing UI** (custom font, look & feel)  
 
 ---
+## 🚀 How to Run the Project
+
+Follow these steps to download, set up, and run the application locally:
+
+### 1️⃣ Clone the repository
+```bash
+git clone https://github.com/YOUR_USERNAME/DesignPatternsFinal.git
+cd DesignPatternsFinal
+
 
 
