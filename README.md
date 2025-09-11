@@ -44,5 +44,10 @@ cd DesignPatternsFinal
 Launch IntelliJ IDEA (Community or Ultimate).
 Click File > Open... and select the DesignPatternsFinal folder.
 
+---
+
+###3️⃣ Configure Libraries
+Go to File > Project Structure > Libraries.
+Add the JARs from the lib/ folder:
 
 
