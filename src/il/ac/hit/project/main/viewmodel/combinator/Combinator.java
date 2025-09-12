@@ -21,6 +21,7 @@ public final class Combinator {
      * @param <T> the type of input to the predicate
      * @return a predicate that performs {@code a && b}
      */
+
     public static <T> Predicate<T> and(Predicate<T> a, Predicate<T> b) {
         return a.and(b);
     }
@@ -39,4 +40,11 @@ public final class Combinator {
     public static <T> Predicate<T> or(Predicate<T> a, Predicate<T> b) {
         return a.or(b);
     }
+    /**
+     * Private constructor to prevent instantiation of this utility class.
+     * <p>
+     * This class only contains static helper methods and should never be instantiated.
+     */
+    private Combinator() {}
+
 }

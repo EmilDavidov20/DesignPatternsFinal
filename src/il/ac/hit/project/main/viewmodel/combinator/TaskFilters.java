@@ -44,4 +44,9 @@ public final class TaskFilters {
     public static Predicate<ITask> any() {
         return t -> true;
     }
+
+    /**
+     * Private constructor to prevent instantiation of this utility class.
+     */
+    private TaskFilters() {}
 }
