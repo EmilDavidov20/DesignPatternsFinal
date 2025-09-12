@@ -131,7 +131,7 @@ public class MainFrame extends JFrame {
         add(new JScrollPane(table), BorderLayout.CENTER);
 
         // Observe the ViewModel’s observable tasks -> refresh the table model
-        vm.tasks.addObserver((o, n) -> model.setData(n));
+        vm.getTasks().addObserver((o, n) -> model.setData(n));
 
         // Wire button actions
         add.addActionListener(e -> onAdd());

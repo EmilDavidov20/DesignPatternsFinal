@@ -4,60 +4,54 @@ import il.ac.hit.project.main.model.dao.*;
 import il.ac.hit.project.main.model.task.*;
 import il.ac.hit.project.main.model.report.*;
 import il.ac.hit.project.main.view.observable.ObservableProperty;
-import il.ac.hit.project.main.viewmodel.combinator.*;
+import il.ac.hit.project.main.viewmodel.combinator.TaskFilters;
 import il.ac.hit.project.main.viewmodel.strategy.*;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
  * ViewModel for the Tasks Management application (MVVM).
- * <p>
  * Bridges between the View (Swing) and the Model/DAO layer:
  * loads tasks, applies filter/sort strategies, exposes observable data to the UI,
  * and delegates persistence operations to the {@link ITasksDAO}.
- * <p>
+ *
  * Patterns in use:
- * <ul>
- *   <li><b>Strategy</b> – runtime selection of sorting via {@link ISortingStrategy}.</li>
- *   <li><b>Combinator</b> – functional composition of predicates for filtering.</li>
- *   <li><b>Observer</b> – {@link ObservableProperty} notifies the View on changes.</li>
- *   <li><b>Adapter/Visitor</b> – export via {@link CsvReportAdapter} and {@link ReportVisitor}.</li>
- * </ul>
+ *  - Strategy – runtime selection of sorting via {@link ISortingStrategy}.
+ *  - Combinator – functional composition of predicates for filtering.
+ *  - Observer – {@link ObservableProperty} notifies the View on changes.
+ *  - Adapter + Visitor – export via {@link CsvReportAdapter} and {@link ReportVisitor}.
  */
 public class TasksViewModel {
 
-    /**
-     * Data-access entry (may be proxied/cached depending on {@link DAOFactory} configuration).
-     */
+    /** Data-access entry (may be proxied/cached depending on {@link DAOFactory} configuration). */
     private final ITasksDAO dao = DAOFactory.getInstance().getDAO();
 
-    /**
-     * In-memory cache of all tasks retrieved from the DAO (source-of-truth for current session).
-     */
+    /** In-memory cache of all tasks retrieved from the DAO (source-of-truth for current session). */
     private final List<ITask> all = new ArrayList<>();
 
-    /**
-     * Current filter predicate (composed via Combinator helpers). Defaults to "accept all".
-     */
-    private java.util.function.Predicate<ITask> filter = TaskFilters.any();
+    /** Current filter predicate (composed via Combinator helpers). Defaults to "accept all". */
+    private Predicate<ITask> filter = TaskFilters.any();
 
-    /**
-     * Current sorting strategy. Defaults to sort-by-id.
-     */
+    /** Current sorting strategy. Defaults to sort-by-id. */
     private ISortingStrategy sort = new SortById();
 
     /**
      * Observable list of tasks after filter+sort.
      * The View (table model) subscribes to this property to auto-refresh on change.
+     * Kept PRIVATE per guideline; expose via getter.
      */
-    public final ObservableProperty<List<ITask>> tasks = new ObservableProperty<>(List.of());
+    private final ObservableProperty<List<ITask>> tasks = new ObservableProperty<>(List.of());
+
+    /** Public accessor for the observable tasks property (read-only reference). */
+    public ObservableProperty<List<ITask>> getTasks() {
+        return tasks;
+    }
 
     /**
      * Loads (or reloads) all tasks from the DAO into memory and publishes
      * the filtered+sorted projection to observers.
-     *
-     * @throws TasksDAOException if persistence access fails
      */
     public void load() throws TasksDAOException {
         all.clear();
@@ -65,38 +59,20 @@ public class TasksViewModel {
         publish();                                  // push filtered+sorted view
     }
 
-    /**
-     * Sets the active filter predicate. If {@code null} is provided, falls back to "match any".
-     * Triggers a re-publish so listeners (UI) immediately see the new projection.
-     *
-     * @param f predicate determining which tasks are visible
-     */
-    public void setFilter(java.util.function.Predicate<ITask> f) {
+    /** Sets the active filter predicate; null means "match any". Triggers publish. */
+    public void setFilter(Predicate<ITask> f) {
         this.filter = (f == null) ? TaskFilters.any() : f;
         publish();
     }
 
-    /**
-     * Sets the active sorting strategy. If {@code null} is provided, keeps the existing strategy.
-     * Triggers a re-publish so listeners (UI) immediately see the new ordering.
-     *
-     * @param s strategy that provides a comparator for ordering tasks
-     */
+    /** Sets the active sorting strategy; ignores null. Triggers publish. */
     public void setSort(ISortingStrategy s) {
-        if (s != null) {
-            this.sort = s;
-        }
+        if (s != null) this.sort = s;
         publish();
     }
 
-    /**
-     * Applies the current filter+sort on the in-memory list and notifies observers.
-     * <p>
-     * Implementation detail: creates a new immutable list for emission to keep the
-     * UI side safe from accidental mutation.
-     */
+    /** Applies current filter+sort and notifies observers with a fresh immutable list. */
     private void publish() {
-        // Filter then sort; collect into an immutable list for safety.
         tasks.setValue(
                 all.stream()
                         .filter(filter)
@@ -105,46 +81,25 @@ public class TasksViewModel {
         );
     }
 
-    /**
-     * Creates a new task and persists it via the DAO, then refreshes the view.
-     *
-     * @param title task title (non-null by caller validation in the View)
-     * @param desc  task description (may be empty)
-     * @param state desired {@link TaskState}
-     * @throws TasksDAOException if persistence access fails
-     */
+    /** Creates a new task, persists via DAO, then refreshes the view. */
     public void add(String title, String desc, TaskState state) throws TasksDAOException {
-        dao.addTask(new Task(0, title, desc, state)); // id is generated by DAO/DB
-        load();                                       // refresh local cache and publish
+        dao.addTask(new Task(0, title, desc, state)); // id generated by DAO/DB
+        load();
     }
 
-    /**
-     * Updates an existing task in the DAO, then refreshes the view.
-     *
-     * @param t the task (including id) to update
-     * @throws TasksDAOException if persistence access fails
-     */
+    /** Updates an existing task via DAO, then refreshes the view. */
     public void update(ITask t) throws TasksDAOException {
         dao.updateTask(t);
         load();
     }
 
-    /**
-     * Deletes a single task by id, then refreshes the view.
-     *
-     * @param id identifier of the task to delete
-     * @throws TasksDAOException if persistence access fails
-     */
+    /** Deletes a single task by id via DAO, then refreshes the view. */
     public void delete(int id) throws TasksDAOException {
         dao.deleteTask(id);
         load();
     }
 
-    /**
-     * Deletes all tasks (bulk) and refreshes the view.
-     *
-     * @throws TasksDAOException if persistence access fails
-     */
+    /** Deletes all tasks via DAO, then refreshes the view. */
     public void deleteAll() throws TasksDAOException {
         dao.deleteTasks();
         load();
@@ -152,18 +107,12 @@ public class TasksViewModel {
 
     /**
      * Exports the currently visible (filtered+sorted) tasks to CSV.
-     * <p>
      * Uses {@link ReportVisitor} to build a {@link ReportData} snapshot,
-     * then delegates to {@link CsvReportAdapter} to write to disk.
-     *
-     * @param path destination file path for the CSV
+     * then delegates to {@link CsvReportAdapter}.
      */
     public void exportCsv(String path) {
         ReportVisitor v = new ReportVisitor();
-        // Visit the currently published tasks (not necessarily all)
-        for (ITask t : tasks.getValue()) {
-            v.visit(t);
-        }
+        for (ITask t : tasks.getValue()) v.visit(t);
         new CsvReportAdapter().export(v.build(), path);
     }
 }
