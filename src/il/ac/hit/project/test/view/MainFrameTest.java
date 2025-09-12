@@ -12,17 +12,36 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Unit tests for {@link MainFrame}.
+ * <p>
+ * These tests validate that the Swing UI is correctly built,
+ * focusing on the Sort and Filter combo boxes at the top of the frame.
+ */
 public class MainFrameTest {
 
+    /**
+     * Runs a task on the Swing Event Dispatch Thread (EDT).
+     * Ensures that Swing components are created and tested safely.
+     */
     private static void runOnEdt(Runnable r) {
         try {
-            if (SwingUtilities.isEventDispatchThread()) r.run();
-            else SwingUtilities.invokeAndWait(r);
+            if (SwingUtilities.isEventDispatchThread()) {
+                r.run();
+            } else {
+                SwingUtilities.invokeAndWait(r);
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * Recursively collects all components inside a given Swing container.
+     *
+     * @param root root container to search
+     * @return flat list of all child components
+     */
     private static List<Component> allComponents(Container root) {
         List<Component> res = new ArrayList<>();
         Deque<Container> st = new ArrayDeque<>();
@@ -31,16 +50,27 @@ public class MainFrameTest {
             Container c = st.pop();
             for (Component child : c.getComponents()) {
                 res.add(child);
-                if (child instanceof Container cc) st.push(cc);
+                if (child instanceof Container cc) {
+                    st.push(cc);
+                }
             }
         }
         return res;
     }
 
+    /**
+     * Ensures that {@link MainFrame} initializes with:
+     * <ul>
+     *   <li>A "Sort" combo box containing "By ID", "By Title", "By State".</li>
+     *   <li>A "Filter" combo box containing all {@link TaskState} values plus an "All" (null) option.</li>
+     * </ul>
+     * Validates both structure and default selection.
+     */
     @Test
     void sortAndFilterComboBox() {
         MainFrame[] holder = new MainFrame[1];
 
+        // Create MainFrame safely on EDT
         runOnEdt(() -> {
             MainFrame f = new MainFrame();
             f.pack();
@@ -50,6 +80,7 @@ public class MainFrameTest {
         MainFrame frame = holder[0];
         assertNotNull(frame);
 
+        // Collect all combo boxes in the frame
         List<JComboBox<?>> combos = allComponents(frame).stream()
                 .filter(c -> c instanceof JComboBox<?>)
                 .map(c -> (JComboBox<?>) c)
@@ -57,6 +88,7 @@ public class MainFrameTest {
 
         assertTrue(combos.size() >= 2, "Expected at least 2 combo boxes (sort + filter)");
 
+        // Validate Sort combo box
         JComboBox<?> sortCombo = combos.stream()
                 .filter(cb -> {
                     ComboBoxModel<?> m = cb.getModel();
@@ -72,6 +104,7 @@ public class MainFrameTest {
         assertEquals("By Title", sortCombo.getItemAt(1));
         assertEquals("By State", sortCombo.getItemAt(2));
 
+        // Validate Filter combo box (TaskState values + All)
         int expectedFilterSize = TaskState.values().length + 1;
         JComboBox<?> filterCombo = combos.stream()
                 .filter(cb -> cb.getModel().getSize() == expectedFilterSize)

@@ -10,10 +10,14 @@ package il.ac.hit.project.main.model.dao;
  * added flexibility (e.g., logging, transaction control, etc.).
  */
 public final class DAOFactory {
-    /** Eagerly initialized singleton instance of the factory. */
+    /**
+     * Eagerly initialized singleton instance of the factory.
+     */
     private static final DAOFactory INSTANCE = new DAOFactory();
 
-    /** The chosen ITasksDAO implementation wrapped with a proxy. */
+    /**
+     * The chosen ITasksDAO implementation wrapped with a proxy.
+     */
     private final ITasksDAO dao;
 
     /**

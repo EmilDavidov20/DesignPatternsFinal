@@ -5,62 +5,73 @@ import il.ac.hit.project.main.model.task.*;
 import java.sql.*;
 import java.util.*;
 
-
+/**
+ * Concrete implementation of {@link ITasksDAO} that stores tasks
+ * in an embedded Apache Derby database.
+ * <p>
+ * This class is a singleton (see {@link #getInstance()}) and provides
+ * full CRUD operations on the tasks table. It also handles creating
+ * the database schema if it does not exist.
+ */
 public class TasksDAODerby implements ITasksDAO {
     private static TasksDAODerby instance;
 
-    //    private TasksDAODerby() throws TasksDAOException {
-//        try {
-//            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
-//            init();
-//        } catch (ClassNotFoundException e) {
-//            throw new TasksDAOException("Derby EmbeddedDriver not found", e);
-//        } catch (SQLException e) {
-//            throw new TasksDAOException("init", e);
-//        }
-//    }
+    /**
+     * Private constructor to enforce Singleton pattern.
+     * Initializes Derby EmbeddedDriver and creates the tasks table if missing.
+     *
+     * @throws TasksDAOException if database initialization fails
+     */
     private TasksDAODerby() throws TasksDAOException {
         try {
             try {
-                Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+                Class.forName("org.apache.derby.jdbc.EmbeddedDriver"); // load Derby driver
             } catch (ClassNotFoundException ignore) {
             }
-
-            init();
+            init(); // ensure table exists
         } catch (java.sql.SQLException e) {
             throw new TasksDAOException("init", e);
         }
     }
 
-
-    //    public static synchronized TasksDAODerby getInstance() throws TasksDAOException {
-//        if (instance == null) instance = new TasksDAODerby();
-//        return instance;
-//    }
+    /**
+     * Returns the single instance of this DAO (Singleton).
+     */
     public static synchronized ITasksDAO getInstance() throws TasksDAOException {
         if (instance == null) instance = new TasksDAODerby();
         return instance;
     }
 
+    /**
+     * Opens a new connection to the embedded Derby database.
+     */
     private Connection getConnection() throws SQLException {
-        String URL = "jdbc:derby:tasksDB;create=true"; //tasksdb//
+        String URL = "jdbc:derby:tasksDB;create=true"; // auto-create DB if not exists
         return DriverManager.getConnection(URL);
     }
 
+    /**
+     * Creates the tasks table if it does not already exist.
+     */
     private void init() throws SQLException {
         try (Connection c = getConnection(); Statement st = c.createStatement()) {
-            st.executeUpdate("CREATE TABLE tasks (id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, title VARCHAR(255), description CLOB, state VARCHAR(32))");
+            st.executeUpdate(
+                    "CREATE TABLE tasks (" +
+                            "id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, " +
+                            "title VARCHAR(255), " +
+                            "description CLOB, " +
+                            "state VARCHAR(32))"
+            );
         } catch (SQLException e) {
-            if (!"X0Y32".equals(e.getSQLState())) throw e;
+            if (!"X0Y32".equals(e.getSQLState())) throw e; // X0Y32 = table already exists
         }
     }
 
+    /**
+     * Converts a string from DB into a {@link TaskState}.
+     * Accepts multiple aliases (e.g., "DONE" → Completed).
+     */
     private static TaskState toState(String s) {
-//        return switch (s) {
-//            case "In Progress" -> TaskState.InProgress;
-//            case "Completed" -> TaskState.Completed;
-//            default -> TaskState.ToDo;
-//        };
         if (s == null) return TaskState.ToDo;
         String x = s.trim();
 
@@ -75,25 +86,22 @@ public class TasksDAODerby implements ITasksDAO {
         return TaskState.ToDo;
     }
 
+    /**
+     * Retrieves all tasks from the database.
+     *
+     * @return array of tasks, never null
+     * @throws TasksDAOException if SQL error occurs
+     */
     public ITask[] getTasks() throws TasksDAOException {
-//        try (Connection c = getConnection(); Statement st = c.createStatement()) {
-//            ResultSet rs = st.executeQuery("SELECT id,title,description,state FROM tasks ORDER BY id");
-//            java.util.List<ITask> list = new ArrayList<>();
-//            while (rs.next())
-//                list.add(new Task(rs.getInt(1), rs.getString(2), rs.getString(3), toState(rs.getString(4))));
-//            return list.toArray(new ITask[0]);
-//        } catch (Exception e) {
-//            throw new TasksDAOException("getTasks", e);
-//        }
         try (Connection c = getConnection(); Statement st = c.createStatement()) {
             ResultSet rs = st.executeQuery("SELECT id,title,description,state FROM tasks ORDER BY id");
             java.util.List<ITask> list = new java.util.ArrayList<>();
             while (rs.next()) {
                 list.add(new Task(
-                        rs.getInt(1),
-                        rs.getString(2),
-                        rs.getString(3),
-                        toState(rs.getString("state"))  // ← המיפוי הסלחני
+                        rs.getInt(1),        // id
+                        rs.getString(2),     // title
+                        rs.getString(3),     // description
+                        toState(rs.getString("state")) // safe mapping of state
                 ));
             }
             return list.toArray(new ITask[0]);
@@ -102,16 +110,14 @@ public class TasksDAODerby implements ITasksDAO {
         }
     }
 
+    /**
+     * Retrieves a single task by its ID.
+     *
+     * @param id task id
+     * @return the task if found, else null
+     * @throws TasksDAOException if SQL error occurs
+     */
     public ITask getTask(int id) throws TasksDAOException {
-//        try (Connection c = getConnection();
-//             PreparedStatement ps = c.prepareStatement("SELECT id,title,description,state FROM tasks WHERE id=?")) {
-//            ps.setInt(1, id);
-//            ResultSet rs = ps.executeQuery();
-//            if (rs.next()) return new Task(rs.getInt(1), rs.getString(2), rs.getString(3), toState(rs.getString(4)));
-//            return null;
-//        } catch (Exception e) {
-//            throw new TasksDAOException("getTask", e);
-//        }
         final String sql = "SELECT id,title,description,state FROM tasks WHERE id=?";
         try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -131,17 +137,12 @@ public class TasksDAODerby implements ITasksDAO {
         }
     }
 
-    //    public void addTask(ITask t) throws TasksDAOException {
-//        try (Connection c = getConnection();
-//             PreparedStatement ps = c.prepareStatement("INSERT INTO tasks(title,description,state) VALUES(?,?,?)")) {
-//            ps.setString(1, t.getTitle());
-//            ps.setString(2, t.getDescription());
-//            ps.setString(3, t.getState().display());
-//            ps.executeUpdate();
-//        } catch (Exception e) {
-//            throw new TasksDAOException("addTask", e);
-//        }
-//    }
+    /**
+     * Adds a new task to the database and sets its generated ID.
+     *
+     * @param t the task to add
+     * @throws TasksDAOException if SQL error occurs
+     */
     @Override
     public void addTask(ITask t) throws TasksDAOException {
         final String sql = "INSERT INTO tasks (title, description, state) VALUES (?,?,?)";
@@ -150,10 +151,10 @@ public class TasksDAODerby implements ITasksDAO {
 
             ps.setString(1, t.getTitle());
             ps.setString(2, t.getDescription());
-            ps.setString(3, t.getState().name());
+            ps.setString(3, t.getState().name()); // save enum name
             ps.executeUpdate();
 
-
+            // First try JDBC-generated keys
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
                     int id = rs.getInt(1);
@@ -162,7 +163,7 @@ public class TasksDAODerby implements ITasksDAO {
                 }
             }
 
-
+            // Fallback for Derby
             try (Statement st = c.createStatement();
                  ResultSet rs = st.executeQuery("VALUES IDENTITY_VAL_LOCAL()")) {
                 if (rs.next()) {
@@ -179,15 +180,19 @@ public class TasksDAODerby implements ITasksDAO {
         }
     }
 
-
+    /**
+     * Updates an existing task in the database.
+     *
+     * @param t the task with updated fields
+     * @throws TasksDAOException if SQL error occurs
+     */
     public void updateTask(ITask t) throws TasksDAOException {
         try (Connection c = getConnection();
-             PreparedStatement ps = c.prepareStatement("UPDATE tasks SET title=?,description=?,state=? WHERE id=?")) {
+             PreparedStatement ps = c.prepareStatement(
+                     "UPDATE tasks SET title=?,description=?,state=? WHERE id=?")) {
             ps.setString(1, t.getTitle());
             ps.setString(2, t.getDescription());
-            //ps.setString(3, t.getState().display());
-            ps.setString(3, t.getState().name());
-
+            ps.setString(3, t.getState().name()); // store enum name
             ps.setInt(4, t.getId());
             ps.executeUpdate();
         } catch (Exception e) {
@@ -195,6 +200,11 @@ public class TasksDAODerby implements ITasksDAO {
         }
     }
 
+    /**
+     * Deletes all tasks from the database.
+     *
+     * @throws TasksDAOException if SQL error occurs
+     */
     public void deleteTasks() throws TasksDAOException {
         try (Connection c = getConnection(); Statement st = c.createStatement()) {
             st.executeUpdate("DELETE FROM tasks");
@@ -203,6 +213,12 @@ public class TasksDAODerby implements ITasksDAO {
         }
     }
 
+    /**
+     * Deletes a specific task by its ID.
+     *
+     * @param id task id
+     * @throws TasksDAOException if SQL error occurs
+     */
     public void deleteTask(int id) throws TasksDAOException {
         try (Connection c = getConnection();
              PreparedStatement ps = c.prepareStatement("DELETE FROM tasks WHERE id=?")) {
