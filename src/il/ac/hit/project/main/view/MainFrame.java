@@ -336,7 +336,7 @@ public class MainFrame extends JFrame {
 
         if (ans == JOptionPane.YES_OPTION) {
             try {
-                vm.deleteAll();
+                vm.deleteVisible(); //vm.deleteAll();
             } catch (TasksDAOException ex) {
                 err(ex);
             }

@@ -48,5 +48,6 @@ public final class TaskFilters {
     /**
      * Private constructor to prevent instantiation of this utility class.
      */
-    private TaskFilters() {}
+    private TaskFilters() {
+    }
 }

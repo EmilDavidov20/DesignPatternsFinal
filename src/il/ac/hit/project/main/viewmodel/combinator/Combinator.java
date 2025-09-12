@@ -40,11 +40,13 @@ public final class Combinator {
     public static <T> Predicate<T> or(Predicate<T> a, Predicate<T> b) {
         return a.or(b);
     }
+
     /**
      * Private constructor to prevent instantiation of this utility class.
      * <p>
      * This class only contains static helper methods and should never be instantiated.
      */
-    private Combinator() {}
+    private Combinator() {
+    }
 
 }

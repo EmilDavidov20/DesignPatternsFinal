@@ -29,7 +29,7 @@ It was developed as part of the **Design Patterns** course and demonstrates usag
 ✔️ 🔎 Search tasks by title  
 ✔️ Export tasks to CSV  
 ✔️ 📑 Generate summary reports with counts and task list  
-✔️ Modernized **Swing UI** 
+✔️ Modernized **Swing UI**
 
 ---
 
