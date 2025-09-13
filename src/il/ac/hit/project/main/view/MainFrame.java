@@ -235,7 +235,7 @@ public class MainFrame extends JFrame {
             if (title.isEmpty() || desc.isEmpty()) {
                 JOptionPane.showMessageDialog(this,
                         "Title and Description are required.",
-                        "Validation",
+                        "Warning",
                         JOptionPane.WARNING_MESSAGE);
                 d.toFront();
                 continue;

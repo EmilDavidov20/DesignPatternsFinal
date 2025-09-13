@@ -122,14 +122,6 @@ public class TasksViewModel {
     }
 
     /**
-     * Deletes all tasks via DAO, then refreshes the view.
-     */
-//    public void deleteAll() throws TasksDAOException {
-//        dao.deleteTasks();
-//        load();
-//    }
-
-    /**
      * Exports the currently visible (filtered+sorted) tasks to CSV.
      * Uses {@link ReportVisitor} to build a {@link ReportData} snapshot,
      * then delegates to {@link CsvReportAdapter}.
@@ -151,5 +143,4 @@ public class TasksViewModel {
         }
         load(); // refresh DB
     }
-
 }
