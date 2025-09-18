@@ -1,6 +1,6 @@
 # 📝 Tasks Management Application
 
-Final Project – Design Patterns (Java, Swing, DerbyDB)
+Final Project - Design Patterns (Java, Swing, DerbyDB)
 
 ![Java](https://img.shields.io/badge/Java-24-orange?logo=java&logoColor=white)
 ![Swing](https://img.shields.io/badge/UI-Swing-blue)
@@ -14,11 +14,11 @@ Final Project – Design Patterns (Java, Swing, DerbyDB)
 This project is a **stand-alone Java desktop application** for managing tasks.  
 It was developed as part of the **Design Patterns** course and demonstrates usage of multiple patterns:
 
-- 🧩 **Strategy** – Sorting tasks (by ID, Title, State).
-- 🔍 **Combinator** – Flexible filtering & searching.
-- 👁️ **Observer** – Updates the UI table when data changes.
-- 🗄️ **DAO** – Derby database access and persistence.
-- 📊 **Visitor** – Generating reports with task statistics.
+- 🧩 **Strategy** - Sorting tasks (by ID, Title, State).
+- 🔍 **Combinator** - Flexible filtering & searching.
+- 👁️ **Observer** - Updates the UI table when data changes.
+- 🗄️ **DAO** - Derby database access and persistence.
+- 📊 **Visitor** - Generating reports with task statistics.
 
 ---
 
