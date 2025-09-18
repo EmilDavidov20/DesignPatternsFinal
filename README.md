@@ -24,12 +24,12 @@ It was developed as part of the **Design Patterns** course and demonstrates usag
 
 ## ✨ Features
 
-✔️ Add / Edit / Delete tasks
-✔️ 🔎 Search tasks by title
-✔️ Sort & Filter by state (ToDo, In Progress, Completed)
-✔️ Export tasks to CSV  
-✔️ 📑 Generate summary reports with counts and task list  
-✔️ Modernized **Swing UI**
+** Add / Edit / Delete tasks
+** Search tasks by title
+** Sort & Filter by state (ToDo, In Progress, Completed)
+** Export tasks to CSV  
+** Generate summary reports with counts and task list  
+** Modernized **Swing UI**
 
 ---
 
