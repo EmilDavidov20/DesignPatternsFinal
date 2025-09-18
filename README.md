@@ -55,7 +55,7 @@ Follow these steps to download, set up, and run the application locally:
 
 ```bash
 git clone https://github.com/EmilDavidov20/TasksManagementApp
-cd DesignPatternsFinal
+cd TasksManagementApp
 ```
 
 ---
