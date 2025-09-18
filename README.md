@@ -13,7 +13,7 @@ Final Project - Design Patterns (Java, Swing, DerbyDB)
 
 This project is a **stand-alone Java desktop application** for managing tasks.  
 It was developed as part of the **Design Patterns** course and demonstrates usage of multiple patterns:
-##
+
 - 🧩 **Strategy** - Sorting tasks (by ID, Title, State).
 - 🔍 **Combinator** - Flexible filtering & searching.
 - 👁️ **Observer** - Updates the UI table when data changes.
@@ -24,7 +24,8 @@ It was developed as part of the **Design Patterns** course and demonstrates usag
 
 ## ✨ Features
 
-✔️ Add / Edit / Delete tasks
+✔️ Add / Edit / Delete tasks 
+
 ✔️ Sort & Filter by state (ToDo, In Progress, Completed)  
 ✔️ 🔎 Search tasks by title  
 ✔️ Export tasks to CSV  
